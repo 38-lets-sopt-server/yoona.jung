@@ -7,6 +7,7 @@ import org.sopt.dto.response.PostResponse;
 import org.sopt.repository.PostRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PostService {
     private final PostRepository postRepository = new PostRepository();
@@ -27,23 +28,35 @@ public class PostService {
 
     // READ - 전체 📝 과제
     public List<PostResponse> getAllPosts() {
-        // TODO
-        return null;
+        List<Post> posts = postRepository.findAll();
+        return posts.stream()
+                .map(PostResponse::new)
+                .collect(Collectors.toList());
     }
 
     // READ - 단건 📝 과제
     public PostResponse getPost(Long id) {
-        // TODO
-        return null;
+        Post post = postRepository.findById(id);
+        if(post == null) {
+            throw new IllegalArgumentException("해당 ID의 게시글이 존재하지 않습니다.");
+        }
+        return new PostResponse(post);
     }
 
     // UPDATE 📝 과제
     public void updatePost(Long id, String newTitle, String newContent) {
-        // TODO
+        Post post = postRepository.findById(id);
+        if(post == null) {
+            throw new IllegalArgumentException("해당 ID의 게시글이 존재하지 않습니다.");
+        }
+        post.update(newTitle, newContent);
     }
 
     // DELETE 📝 과제
     public void deletePost(Long id) {
-        // TODO
+        boolean isDeleted = postRepository.deleteById(id);
+        if(!isDeleted) {
+            throw new IllegalArgumentException("삭제하려는 게시글이 존재하지 않습니다.");
+        }
     }
 }
