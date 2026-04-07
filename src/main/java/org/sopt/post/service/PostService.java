@@ -1,10 +1,10 @@
-package org.sopt.service;
+package org.sopt.post.service;
 
-import org.sopt.domain.Post;
-import org.sopt.dto.request.CreatePostRequest;
-import org.sopt.dto.response.CreatePostResponse;
-import org.sopt.dto.response.PostResponse;
-import org.sopt.repository.PostRepository;
+import org.sopt.post.domain.Post;
+import org.sopt.post.dto.request.CreatePostRequest;
+import org.sopt.post.dto.response.CreatePostResponse;
+import org.sopt.post.dto.response.PostResponse;
+import org.sopt.post.repository.PostRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,9 +1,9 @@
-package org.sopt.controller;
+package org.sopt.post.controller;
 
-import org.sopt.dto.request.CreatePostRequest;
-import org.sopt.dto.response.CreatePostResponse;
-import org.sopt.dto.response.PostResponse;
-import org.sopt.service.PostService;
+import org.sopt.post.dto.request.CreatePostRequest;
+import org.sopt.post.dto.response.CreatePostResponse;
+import org.sopt.post.dto.response.PostResponse;
+import org.sopt.post.service.PostService;
 
 import java.util.List;
 
