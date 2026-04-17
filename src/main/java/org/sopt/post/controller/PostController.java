@@ -3,6 +3,7 @@ package org.sopt.post.controller;
 import org.sopt.global.common.dto.ApiResponse;
 import org.sopt.global.exception.PostNotFoundException;
 import org.sopt.post.dto.request.CreatePostRequest;
+import org.sopt.post.dto.request.UpdatePostRequest;
 import org.sopt.post.dto.response.CreatePostResponse;
 import org.sopt.post.dto.response.PostResponse;
 import org.sopt.post.service.PostService;
@@ -13,7 +14,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/posts")
 public class PostController {
-    private final PostService postService = new PostService();
+    private final PostService postService;
+
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
 
     // POST /posts
     @PostMapping
@@ -26,14 +31,12 @@ public class PostController {
         }
     }
 
-    // GET /posts
     @GetMapping
     public ApiResponse<List<PostResponse>> getAllPosts() {
         List<PostResponse> response = postService.getAllPosts();
         return ApiResponse.success("게시글 전체 조회 성공", response);
     }
 
-    // GET /posts/{id}
     @GetMapping("/{id}")
     public ApiResponse<PostResponse> getPost(@PathVariable Long id) {
         try {
@@ -46,9 +49,11 @@ public class PostController {
 
     // PUT /posts/{id}
     @PutMapping("/{id}")
-    public ApiResponse<Void> updatePost(Long id, String newTitle, String newContent) {
+    public ApiResponse<Void> updatePost(
+            @PathVariable Long id,
+            @RequestBody UpdatePostRequest request) {
         try {
-            postService.updatePost(id, newTitle, newContent);
+            postService.updatePost(id, request);
             return ApiResponse.success("게시글 수정 성공", null);
         } catch (PostNotFoundException e) {
             return ApiResponse.fail("게시글 수정 실패 " + e.getMessage());
@@ -57,7 +62,7 @@ public class PostController {
 
     // DELETE /posts/{id}
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deletePost(Long id) {
+    public ApiResponse<Void> deletePost(@PathVariable Long id) {
         try {
             postService.deletePost(id);
             return ApiResponse.success("게시글 삭제 성공", null);
