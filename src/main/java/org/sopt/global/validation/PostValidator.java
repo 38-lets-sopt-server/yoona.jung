@@ -6,7 +6,7 @@ import org.sopt.post.dto.request.CreatePostRequest;
 
 public class PostValidator {
 
-    public void PostCreateValidation(CreatePostRequest request) {
+    public void postCreateValidation(CreatePostRequest request) {
         if (request.title == null || request.title.isBlank()) {
             throw new IllegalArgumentException("제목은 필수입니다.");
         }

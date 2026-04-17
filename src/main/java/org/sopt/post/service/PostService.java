@@ -9,6 +9,7 @@ import org.sopt.post.dto.response.PostResponse;
 import org.sopt.post.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,16 +20,16 @@ public class PostService {
 
     // CREATE
     public CreatePostResponse createPost(CreatePostRequest request) {
-        postValidator.PostCreateValidation(request);
+        postValidator.postCreateValidation(request);
 
-        String createdAt = java.time.LocalDateTime.now().toString();
-        Post post = new Post(postRepository.generateId(), request.title, request.content, request.author, createdAt);
+        LocalDateTime createdAt = java.time.LocalDateTime.now();
+        Post post = new Post(postRepository.generateId(), request.title(), request.content(), request.author(), createdAt);
         postRepository.save(post);
 
         return new CreatePostResponse(post.getId(), "게시글 등록 완료!");
     }
 
-    // READ - 전체 📝 과제
+    // READ
     public List<PostResponse> getAllPosts() {
         List<Post> posts = postRepository.findAll();
 
@@ -37,7 +38,7 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    // READ - 단건 📝 과제
+    // READ
     public PostResponse getPost(Long id) {
         Post post = postRepository.findById(id)
                         .orElseThrow(() -> new PostNotFoundException(id));
@@ -46,7 +47,7 @@ public class PostService {
         return new PostResponse(post);
     }
 
-    // UPDATE 📝 과제
+    // UPDATE
     public void updatePost(Long id, String newTitle, String newContent) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
@@ -54,7 +55,7 @@ public class PostService {
         post.update(newTitle, newContent);
     }
 
-    // DELETE 📝 과제
+    // DELETE
     public void deletePost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
