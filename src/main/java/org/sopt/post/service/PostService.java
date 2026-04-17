@@ -1,5 +1,7 @@
 package org.sopt.post.service;
 
+import org.sopt.global.exception.CustomException;
+import org.sopt.global.exception.ErrorCode;
 import org.sopt.global.exception.PostNotFoundException;
 import org.sopt.post.domain.Post;
 import org.sopt.post.dto.request.CreatePostRequest;
@@ -23,6 +25,12 @@ public class PostService {
 
     // CREATE
     public CreatePostResponse createPost(CreatePostRequest request) {
+        if (request.title() == null || request.title().isBlank()) {
+            throw new CustomException(ErrorCode.INVALID_POST_INPUT);
+        }
+        if (request.content() == null || request.content().isBlank()) {
+            throw new CustomException(ErrorCode.INVALID_POST_INPUT);
+        }
         LocalDateTime createdAt = java.time.LocalDateTime.now();
         Post post = new Post(postRepository.generateId(), request.title(), request.content(), request.author(), createdAt);
         postRepository.save(post);
