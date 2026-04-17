@@ -6,14 +6,18 @@ import org.sopt.post.dto.request.CreatePostRequest;
 import org.sopt.post.dto.response.CreatePostResponse;
 import org.sopt.post.dto.response.PostResponse;
 import org.sopt.post.service.PostService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/posts")
 public class PostController {
     private final PostService postService = new PostService();
 
     // POST /posts
-    public ApiResponse<CreatePostResponse> createPost(CreatePostRequest request) {
+    @PostMapping
+    public ApiResponse<CreatePostResponse> createPost(@RequestBody CreatePostRequest request) {
         try {
             CreatePostResponse response = postService.createPost(request);
             return ApiResponse.success("게시글 등록 성공", response);
@@ -22,14 +26,16 @@ public class PostController {
         }
     }
 
-    // GET /posts 📝 과제
+    // GET /posts
+    @GetMapping
     public ApiResponse<List<PostResponse>> getAllPosts() {
         List<PostResponse> response = postService.getAllPosts();
         return ApiResponse.success("게시글 전체 조회 성공", response);
     }
 
-    // GET /posts/{id} 📝 과제
-    public ApiResponse<PostResponse> getPost(Long id) {
+    // GET /posts/{id}
+    @GetMapping("/{id}")
+    public ApiResponse<PostResponse> getPost(@PathVariable Long id) {
         try {
             PostResponse response = postService.getPost(id);
             return ApiResponse.success("게시글 조회 성공", response);
@@ -38,7 +44,8 @@ public class PostController {
         }
     }
 
-    // PUT /posts/{id} 📝 과제
+    // PUT /posts/{id}
+    @PutMapping("/{id}")
     public ApiResponse<Void> updatePost(Long id, String newTitle, String newContent) {
         try {
             postService.updatePost(id, newTitle, newContent);
@@ -48,7 +55,8 @@ public class PostController {
         }
     }
 
-    // DELETE /posts/{id} 📝 과제
+    // DELETE /posts/{id}
+    @DeleteMapping("/{id}")
     public ApiResponse<Void> deletePost(Long id) {
         try {
             postService.deletePost(id);
