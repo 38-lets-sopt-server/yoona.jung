@@ -40,7 +40,6 @@ public class PostService {
 
     // READ
     public List<PostResponse> getAllPosts() {
-
         return postRepository.findAll().stream()
                 .map(PostResponse::new)
                 .collect(Collectors.toList());
