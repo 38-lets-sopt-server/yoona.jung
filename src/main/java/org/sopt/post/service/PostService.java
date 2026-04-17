@@ -7,10 +7,12 @@ import org.sopt.post.dto.request.CreatePostRequest;
 import org.sopt.post.dto.response.CreatePostResponse;
 import org.sopt.post.dto.response.PostResponse;
 import org.sopt.post.repository.PostRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class PostService {
     private final PostRepository postRepository = new PostRepository();
     private final PostValidator postValidator = new PostValidator();
@@ -37,7 +39,8 @@ public class PostService {
 
     // READ - 단건 📝 과제
     public PostResponse getPost(Long id) {
-        Post post = postRepository.findById(id);
+        Post post = postRepository.findById(id)
+                        .orElseThrow(() -> new PostNotFoundException(id));
         postValidator.PostExistValidation(post, id);
 
         return new PostResponse(post);
@@ -45,14 +48,16 @@ public class PostService {
 
     // UPDATE 📝 과제
     public void updatePost(Long id, String newTitle, String newContent) {
-        Post post = postRepository.findById(id);
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(id));
         postValidator.PostExistValidation(post, id);
         post.update(newTitle, newContent);
     }
 
     // DELETE 📝 과제
     public void deletePost(Long id) {
-        Post post = postRepository.findById(id);
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(id));
         postValidator.PostExistValidation(post, id);
         postRepository.deleteById(id);
     }
