@@ -1,64 +1,68 @@
 package org.sopt.post.service;
 
+import org.sopt.global.exception.CustomException;
+import org.sopt.global.exception.ErrorCode;
 import org.sopt.global.exception.PostNotFoundException;
-import org.sopt.global.validation.PostValidator;
 import org.sopt.post.domain.Post;
 import org.sopt.post.dto.request.CreatePostRequest;
+import org.sopt.post.dto.request.UpdatePostRequest;
 import org.sopt.post.dto.response.CreatePostResponse;
 import org.sopt.post.dto.response.PostResponse;
 import org.sopt.post.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class PostService {
-    private final PostRepository postRepository = new PostRepository();
-    private final PostValidator postValidator = new PostValidator();
+    private final PostRepository postRepository;
+
+    public PostService(PostRepository postRepository) {
+        this.postRepository = postRepository;
+    }
 
     // CREATE
     public CreatePostResponse createPost(CreatePostRequest request) {
-        postValidator.PostCreateValidation(request);
-
-        String createdAt = java.time.LocalDateTime.now().toString();
-        Post post = new Post(postRepository.generateId(), request.title, request.content, request.author, createdAt);
+        if (request.title() == null || request.title().isBlank()) {
+            throw new CustomException(ErrorCode.INVALID_POST_INPUT);
+        }
+        if (request.content() == null || request.content().isBlank()) {
+            throw new CustomException(ErrorCode.INVALID_POST_INPUT);
+        }
+        LocalDateTime createdAt = java.time.LocalDateTime.now();
+        Post post = new Post(postRepository.generateId(), request.title(), request.content(), request.author(), createdAt);
         postRepository.save(post);
 
         return new CreatePostResponse(post.getId(), "게시글 등록 완료!");
     }
 
-    // READ - 전체 📝 과제
+    // READ
     public List<PostResponse> getAllPosts() {
-        List<Post> posts = postRepository.findAll();
-
-        return posts.stream()
+        return postRepository.findAll().stream()
                 .map(PostResponse::new)
                 .collect(Collectors.toList());
     }
 
-    // READ - 단건 📝 과제
+    // READ
     public PostResponse getPost(Long id) {
-        Post post = postRepository.findById(id)
-                        .orElseThrow(() -> new PostNotFoundException(id));
-        postValidator.PostExistValidation(post, id);
-
-        return new PostResponse(post);
+        return postRepository.findById(id)
+                .map(PostResponse::new)
+                .orElseThrow(() -> new PostNotFoundException(id));
     }
 
-    // UPDATE 📝 과제
-    public void updatePost(Long id, String newTitle, String newContent) {
+    // UPDATE
+    public void updatePost(Long id, UpdatePostRequest request) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
-        postValidator.PostExistValidation(post, id);
-        post.update(newTitle, newContent);
+        post.update(request.title(), request.newContent());
     }
 
-    // DELETE 📝 과제
+    // DELETE
     public void deletePost(Long id) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException(id));
-        postValidator.PostExistValidation(post, id);
-        postRepository.deleteById(id);
+        if (!postRepository.deleteById(id)) {
+            throw new PostNotFoundException(id);
+        }
     }
 }
