@@ -14,6 +14,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT DISTINCT p from Post p LEFT JOIN FETCH p.likes")
     List<Post> findAllWithLikes();
 
-    @Query("SELECT p FROM Post p JOIN FETCH p.user WHERE p.title LIKE CONCAT('%', :keyword, '%')")
+    @Query("SELECT p FROM Post p JOIN FETCH p.user WHERE p.title LIKE %:keyword%")
     List<Post> searchByTitleWithUser(@Param("keyword") String keyword);
 }
