@@ -26,6 +26,11 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private int likeCount = 0;
+
+    @Version
+    private Long version;
+
     @OneToMany(mappedBy = "post") // Like 엔티티의 'post' 필드와 연결
     private List<Like> likes = new ArrayList<>();
 
@@ -38,5 +43,15 @@ public class Post extends BaseTimeEntity {
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        if (this.likeCount > 0) {
+            this.likeCount--;
+        }
     }
 }

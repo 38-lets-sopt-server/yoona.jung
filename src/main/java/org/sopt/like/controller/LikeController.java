@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.sopt.global.common.dto.BaseResponse;
 import org.sopt.like.dto.LikeRequest;
+import org.sopt.like.facade.LikeFacade;
 import org.sopt.like.service.LikeService;
 import org.sopt.post.dto.response.PostResponse;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class LikeController {
 
-    private final LikeService likeService;
+    private final LikeFacade likeFacade;
 
     @Operation(
             summary = "좋아요 추가",
@@ -36,8 +37,9 @@ public class LikeController {
             @Parameter(description = "좋아요를 누를 게시글의 ID", example = "1", required = true)
             @PathVariable Long postId,
             @RequestBody LikeRequest request
-            ) {
-        likeService.addLike(postId, request.userId());
+            ) throws InterruptedException{
+        likeFacade.addLikeWithRetry(postId, request.userId());
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(BaseResponse.success("좋아요 추가 성공"));
     }
@@ -55,8 +57,8 @@ public class LikeController {
     public ResponseEntity<BaseResponse<Void>> cancelLike(
             @PathVariable Long postId,
             @RequestBody LikeRequest request
-    ) {
-        likeService.cancelLike(postId, request.userId());
+    ) throws InterruptedException {
+        likeFacade.addLikeWithRetry(postId, request.userId());
         return ResponseEntity.ok(BaseResponse.success("좋아요 취소 성공"));
     }
 }

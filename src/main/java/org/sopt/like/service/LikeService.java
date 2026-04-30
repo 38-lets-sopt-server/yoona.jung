@@ -37,6 +37,8 @@ public class LikeService {
 
         Like like = new Like(user, post);
         likeRepository.save(like);
+
+        post.increaseLikeCount();
     }
 
     // 좋아요 취소
