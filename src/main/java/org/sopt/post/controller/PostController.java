@@ -117,9 +117,10 @@ public class PostController {
     })
     @GetMapping("/search")
     public ResponseEntity<BaseResponse<List<PostSearchResponse>>> searchPosts(
-            @RequestParam("keyword") String keyword
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "nickname", required = false) String nickname
     ) {
-        List<PostSearchResponse> results = postService.searchPosts(keyword);
+        List<PostSearchResponse> results = postService.searchPosts(keyword, nickname);
         return ResponseEntity.ok(BaseResponse.success("게시글 검색 성공", results));
     }
 }

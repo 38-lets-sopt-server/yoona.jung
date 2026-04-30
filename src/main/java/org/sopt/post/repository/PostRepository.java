@@ -10,10 +10,7 @@ import java.util.List;
 
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
     @Query("SELECT DISTINCT p from Post p LEFT JOIN FETCH p.likes")
     List<Post> findAllWithLikes();
-
-    @Query("SELECT p FROM Post p JOIN FETCH p.user WHERE p.title LIKE %:keyword%")
-    List<Post> searchByTitleWithUser(@Param("keyword") String keyword);
 }

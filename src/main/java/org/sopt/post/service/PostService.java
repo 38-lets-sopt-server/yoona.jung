@@ -62,8 +62,8 @@ public class PostService {
 
     // SEARCH
     @Transactional(readOnly = true)
-    public List<PostSearchResponse> searchPosts(String keyword) {
-        return postRepository.searchByTitleWithUser(keyword).stream()
+    public List<PostSearchResponse> searchPosts(String keyword, String nickname) {
+        return postRepository.searchPosts(keyword, nickname).stream()
                 .map(PostSearchResponse::from)
                 .collect(Collectors.toList());
     }
