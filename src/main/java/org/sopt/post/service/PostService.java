@@ -46,7 +46,7 @@ public class PostService {
     // READ
     @Transactional(readOnly = true)
     public List<PostResponse> getAllPosts() {
-        return postRepository.findAll().stream()
+        return postRepository.findAllWithLikes().stream()
                 .map(PostResponse::from)
                 .collect(Collectors.toList());
     }
