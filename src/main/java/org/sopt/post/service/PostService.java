@@ -1,5 +1,6 @@
 package org.sopt.post.service;
 
+import lombok.RequiredArgsConstructor;
 import org.sopt.global.exception.CustomException;
 import org.sopt.post.domain.Post;
 import org.sopt.post.dto.request.CreatePostRequest;
@@ -18,17 +19,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-
-    public PostService(
-            PostRepository postRepository,
-            UserRepository userRepository
-    ) {
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-    }
 
     // CREATE
     @Transactional
