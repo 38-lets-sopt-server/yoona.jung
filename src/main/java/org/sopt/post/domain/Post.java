@@ -5,9 +5,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.sopt.global.entity.BaseTimeEntity;
+import org.sopt.like.domain.Like;
 import org.sopt.user.domain.User;
-
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -24,6 +25,9 @@ public class Post extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "post") // Like 엔티티의 'post' 필드와 연결
+    private List<Like> likes = new ArrayList<>();
 
     public Post(String title, String content, User user) {
         this.title = title;
