@@ -5,12 +5,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.sopt.global.common.dto.BaseResponse;
 import org.sopt.post.dto.request.CreatePostRequest;
 import org.sopt.post.dto.request.UpdatePostRequest;
 import org.sopt.post.dto.response.CreatePostResponse;
 import org.sopt.post.dto.response.PostResponse;
+import org.sopt.post.dto.response.PostSearchResponse;
 import org.sopt.post.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -103,5 +105,21 @@ public class PostController {
     ) {
         postService.deletePost(id);
         return ResponseEntity.ok(BaseResponse.success("게시글 삭제 성공"));
+    }
+
+    @Operation(
+            summary = "게시글 제목 검색",
+            description = "게시글 제목을 검색합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.")
+    })
+    @GetMapping("/search")
+    public ResponseEntity<BaseResponse<List<PostSearchResponse>>> searchPosts(
+            @RequestParam("keyword") String keyword
+    ) {
+        List<PostSearchResponse> results = postService.searchPosts(keyword);
+        return ResponseEntity.ok(BaseResponse.success("게시글 검색 성공", results));
     }
 }

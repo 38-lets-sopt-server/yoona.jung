@@ -7,6 +7,7 @@ import org.sopt.post.dto.request.CreatePostRequest;
 import org.sopt.post.dto.request.UpdatePostRequest;
 import org.sopt.post.dto.response.CreatePostResponse;
 import org.sopt.post.dto.response.PostResponse;
+import org.sopt.post.dto.response.PostSearchResponse;
 import org.sopt.post.execption.PostErrorCode;
 import org.sopt.post.repository.PostRepository;
 import org.sopt.user.domain.User;
@@ -57,6 +58,14 @@ public class PostService {
         return postRepository.findById(id)
                 .map(PostResponse::from)
                 .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND));
+    }
+
+    // SEARCH
+    @Transactional(readOnly = true)
+    public List<PostSearchResponse> searchPosts(String keyword) {
+        return postRepository.searchByTitleWithUser(keyword).stream()
+                .map(PostSearchResponse::from)
+                .collect(Collectors.toList());
     }
 
     // UPDATE
