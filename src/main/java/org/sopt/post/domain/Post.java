@@ -1,12 +1,19 @@
 package org.sopt.post.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.sopt.global.entity.BaseTimeEntity;
+import org.sopt.like.domain.Like;
 import org.sopt.user.domain.User;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.time.LocalDateTime;
-
+@Getter
 @Entity
-public class Post {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,9 +26,13 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private LocalDateTime createdAt;
+    private int likeCount = 0;
 
-    protected Post() {}; // JPA 기본 생성자
+    @Version
+    private Long version;
+
+    @OneToMany(mappedBy = "post") // Like 엔티티의 'post' 필드와 연결
+    private List<Like> likes = new ArrayList<>();
 
     public Post(String title, String content, User user) {
         this.title = title;
@@ -29,13 +40,18 @@ public class Post {
         this.user = user;
     }
 
-    public Long getId() { return id; }
-    public String getTitle() { return title; }
-    public String getContent() { return content; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        if (this.likeCount > 0) {
+            this.likeCount--;
+        }
     }
 }
