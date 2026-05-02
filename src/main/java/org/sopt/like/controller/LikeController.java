@@ -58,7 +58,7 @@ public class LikeController {
             @PathVariable Long postId,
             @RequestBody LikeRequest request
     ) throws InterruptedException {
-        likeFacade.addLikeWithRetry(postId, request.userId());
+        likeFacade.cancelLikeWithRetry(postId, request.userId());
         return ResponseEntity.ok(BaseResponse.success("좋아요 취소 성공"));
     }
 }

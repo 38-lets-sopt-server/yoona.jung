@@ -54,5 +54,7 @@ public class LikeService {
                 .orElseThrow(() -> new CustomException(LikeErrorCode.LIKE_NOT_FOUND));
 
         likeRepository.delete(like);
+
+        post.decreaseLikeCount();
     }
 }
