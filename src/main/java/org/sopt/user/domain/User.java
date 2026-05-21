@@ -25,4 +25,8 @@ public class User {
         this.email = email;
         this.password = password;
     }
+
+    public static User create(String nickname, String email, String encodedPassword) {
+        return new User(nickname, email, encodedPassword);
+    }
 }
