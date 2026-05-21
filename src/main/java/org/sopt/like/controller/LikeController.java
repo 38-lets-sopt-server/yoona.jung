@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.global.common.dto.BaseResponse;
 import org.sopt.like.dto.LikeRequest;
 import org.sopt.like.facade.LikeFacade;
-import org.sopt.like.service.LikeService;
-import org.sopt.post.dto.response.PostResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
