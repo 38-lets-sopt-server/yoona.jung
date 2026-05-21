@@ -7,10 +7,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.sopt.global.common.dto.BaseResponse;
-import org.sopt.like.dto.LikeRequest;
 import org.sopt.like.facade.LikeFacade;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Like", description = "좋아요 api")
@@ -34,9 +34,9 @@ public class LikeController {
     public ResponseEntity<BaseResponse<Void>> addLike(
             @Parameter(description = "좋아요를 누를 게시글의 ID", example = "1", required = true)
             @PathVariable Long postId,
-            @RequestBody LikeRequest request
+            @AuthenticationPrincipal Long userId
             ) throws InterruptedException{
-        likeFacade.addLikeWithRetry(postId, request.userId());
+        likeFacade.addLikeWithRetry(postId, userId);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(BaseResponse.success("좋아요 추가 성공"));
@@ -54,9 +54,9 @@ public class LikeController {
     @DeleteMapping
     public ResponseEntity<BaseResponse<Void>> cancelLike(
             @PathVariable Long postId,
-            @RequestBody LikeRequest request
+            @AuthenticationPrincipal Long userId
     ) throws InterruptedException {
-        likeFacade.cancelLikeWithRetry(postId, request.userId());
+        likeFacade.cancelLikeWithRetry(postId, userId);
         return ResponseEntity.ok(BaseResponse.success("좋아요 취소 성공"));
     }
 }
