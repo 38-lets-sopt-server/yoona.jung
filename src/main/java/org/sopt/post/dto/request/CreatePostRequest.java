@@ -7,8 +7,5 @@ public record CreatePostRequest(
         String title,
 
         @Schema(description = "게시글 내용 (최대 500자)", example = "내용입니다")
-        String content,
-
-        @Schema(description = "사용자 ID", example = "1")
-        Long userId
+        String content
 ) {}

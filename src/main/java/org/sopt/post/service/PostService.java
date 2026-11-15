@@ -1,5 +1,6 @@
 package org.sopt.post.service;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.global.exception.CustomException;
 import org.sopt.post.domain.Post;
@@ -25,26 +26,17 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    // CREATE
     @Transactional
-    public CreatePostResponse createPost(CreatePostRequest request) {
-        if (request.title() == null || request.title().isBlank()) {
-            throw new CustomException(PostErrorCode.INVALID_POST_TITLE);
-        }
-        if (request.content() == null || request.content().isBlank()) {
-            throw new CustomException(PostErrorCode.INVALID_POST_CONTENT);
-        }
-
-        User user = userRepository.findById(request.userId())
+    public CreatePostResponse createPost(CreatePostRequest request, Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
 
         Post post = new Post(request.title(), request.content(), user);
-        postRepository.save(post); // 영속성 컨텍스트에 올라감
+        postRepository.save(post);
 
         return new CreatePostResponse(post.getId(), "게시글 등록 완료!");
     }
 
-    // READ
     @Transactional(readOnly = true)
     public List<PostResponse> getAllPosts() {
         return postRepository.findAllWithLikes().stream()
@@ -52,7 +44,6 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    // READ
     @Transactional(readOnly = true)
     public PostResponse getPost(Long id) {
         return postRepository.findById(id)
@@ -60,7 +51,6 @@ public class PostService {
                 .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND));
     }
 
-    // SEARCH
     @Transactional(readOnly = true)
     public List<PostSearchResponse> searchPosts(String keyword, String nickname) {
         return postRepository.searchPosts(keyword, nickname).stream()
@@ -68,20 +58,27 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    // UPDATE
     @Transactional
-    public PostResponse updatePost(Long id, UpdatePostRequest request) {
+    public PostResponse updatePost(Long id, UpdatePostRequest request, Long userId) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND));
-        post.update(request.title(), request.newContent());
 
+        if (!post.getUser().getId().equals(userId)) {
+            throw new CustomException(PostErrorCode.POST_FORBIDDEN);
+        }
+
+        post.update(request.title(), request.newContent());
         return PostResponse.from(post);
     }
 
-    // DELETE
     @Transactional
-    public void deletePost(Long id) {
+    public void deletePost(Long id, Long userId) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND));
+
+        if (!post.getUser().getId().equals(userId)) {
+            throw new CustomException(PostErrorCode.POST_FORBIDDEN);
+        }
+        postRepository.delete(post);
     }
 }

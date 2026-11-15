@@ -2,6 +2,7 @@ package org.sopt.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.global.common.dto.BaseResponse;
 import org.sopt.user.dto.request.CreateUserRequest;
@@ -24,7 +25,9 @@ public class UserController {
 
     @Operation(summary = "유저 생성", description = "새로운 유저를 생성합니다.")
     @PostMapping
-    public ResponseEntity<BaseResponse<CreateUserResponse>> createUser(@RequestBody CreateUserRequest request) {
+    public ResponseEntity<BaseResponse<CreateUserResponse>> createUser(
+            @Valid @RequestBody CreateUserRequest request
+    ) {
         CreateUserResponse response = userService.createUser(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
